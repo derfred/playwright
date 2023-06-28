@@ -3178,6 +3178,13 @@ Electron:
       returns:
         electronApplication: ElectronApplication
 
+    attach:
+      parameters:
+        id: number
+
+      returns:
+        electronContext: ElectronContext
+
 
 ElectronApplication:
   type: interface
@@ -3215,6 +3222,255 @@ ElectronApplication:
 
   events:
     close:
+
+ElectronContext:
+  type: interface
+
+  extends: EventTarget
+
+  initializer:
+    context: BrowserContext
+    tracing: Tracing
+
+  commands:
+
+    addCookies:
+      parameters:
+        cookies:
+          type: array
+          items: SetNetworkCookie
+
+    addInitScript:
+      parameters:
+        source: string
+
+    clearCookies:
+
+    clearPermissions:
+
+    close:
+
+    cookies:
+      parameters:
+        urls:
+          type: array
+          items: string
+      returns:
+        cookies:
+          type: array
+          items: NetworkCookie
+
+    exposeBinding:
+      parameters:
+        name: string
+        needsHandle: boolean?
+
+    grantPermissions:
+      parameters:
+        permissions:
+          type: array
+          items: string
+        origin: string?
+
+    page:
+      returns:
+        page: Page
+
+    newPage:
+      returns:
+        page: Page
+
+    setDefaultNavigationTimeoutNoReply:
+      parameters:
+        timeout: number?
+
+    setDefaultTimeoutNoReply:
+      parameters:
+        timeout: number?
+
+    setExtraHTTPHeaders:
+      parameters:
+        headers:
+          type: array
+          items: NameValue
+
+    setGeolocation:
+      parameters:
+        geolocation:
+          type: object?
+          properties:
+            longitude: number
+            latitude: number
+            accuracy: number?
+
+    setHTTPCredentials:
+      parameters:
+        httpCredentials:
+          type: object?
+          properties:
+            username: string
+            password: string
+            origin: string?
+
+    setNetworkInterceptionPatterns:
+      parameters:
+        patterns:
+          type: array
+          items:
+            type: object
+            properties:
+              glob: string?
+              regexSource: string?
+              regexFlags: string?
+
+    setOffline:
+      parameters:
+        offline: boolean
+
+    storageState:
+      returns:
+        cookies:
+          type: array
+          items: NetworkCookie
+        origins:
+          type: array
+          items: OriginStorage
+
+    pause:
+      experimental: True
+
+    recorderSupplementEnable:
+      experimental: True
+      parameters:
+        language: string?
+        mode:
+          type: enum?
+          literals:
+          - inspecting
+          - recording
+        pauseOnNextStatement: boolean?
+        testIdAttributeName: string?
+        launchOptions: json?
+        contextOptions: json?
+        device: string?
+        saveStorage: string?
+        outputFile: string?
+        handleSIGINT: boolean?
+        omitCallTracking: boolean?
+
+    newCDPSession:
+      parameters:
+        page: Page?
+        frame: Frame?
+      returns:
+        session: CDPSession
+
+    harStart:
+      parameters:
+        page: Page?
+        options: RecordHarOptions
+      returns:
+        harId: string
+
+    harExport:
+      parameters:
+        harId: string?
+      returns:
+        artifact: Artifact
+
+    createTempFile:
+      parameters:
+        name: string
+      returns:
+        writableStream: WritableStream
+
+    updateSubscription:
+      parameters:
+        event:
+          type: enum
+          literals:
+          - console
+          - dialog
+          - request
+          - response
+          - requestFinished
+          - requestFailed
+        enabled: boolean
+
+    startTracing:
+      parameters:
+        page: Page?
+        path: string?
+        screenshots: boolean?
+        categories:
+          type: array?
+          items: string
+
+    stopTracing:
+      parameters:
+        path: string?
+      returns:
+        binary: binary
+
+  events:
+
+    bindingCall:
+      parameters:
+        binding: BindingCall
+
+    console:
+      parameters:
+        message: ConsoleMessage
+
+    close:
+
+    dialog:
+      parameters:
+        dialog: Dialog
+
+    page:
+      parameters:
+        page: Page
+
+    route:
+      parameters:
+        route: Route
+
+    video:
+      parameters:
+        artifact: Artifact
+
+    backgroundPage:
+      parameters:
+        page: Page
+
+    serviceWorker:
+      parameters:
+        worker: Worker
+
+    request:
+      parameters:
+        request: Request
+        page: Page?
+
+    requestFailed:
+      parameters:
+        request: Request
+        failureText: string?
+        responseEndTiming: number
+        page: Page?
+
+    requestFinished:
+      parameters:
+        request: Request
+        response: Response?
+        responseEndTiming: number
+        page: Page?
+
+    response:
+      parameters:
+        response: Response
+        page: Page?
 
 
 Android:

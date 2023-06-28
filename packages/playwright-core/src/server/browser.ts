@@ -42,7 +42,7 @@ export type BrowserOptions = {
   tracesDir: string,
   headful?: boolean,
   persistent?: channels.BrowserNewContextParams,  // Undefined means no persistent context.
-  browserProcess: BrowserProcess,
+  browserProcess?: BrowserProcess,
   customExecutablePath?: string;
   proxy?: ProxySettings,
   protocolLogger: types.ProtocolLogger,

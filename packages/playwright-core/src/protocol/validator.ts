@@ -745,12 +745,14 @@ scheme.BrowserContextWaitForEventInfoParams = tType('EventTargetWaitForEventInfo
 scheme.PageWaitForEventInfoParams = tType('EventTargetWaitForEventInfoParams');
 scheme.WebSocketWaitForEventInfoParams = tType('EventTargetWaitForEventInfoParams');
 scheme.ElectronApplicationWaitForEventInfoParams = tType('EventTargetWaitForEventInfoParams');
+scheme.ElectronContextWaitForEventInfoParams = tType('EventTargetWaitForEventInfoParams');
 scheme.AndroidDeviceWaitForEventInfoParams = tType('EventTargetWaitForEventInfoParams');
 scheme.EventTargetWaitForEventInfoResult = tOptional(tObject({}));
 scheme.BrowserContextWaitForEventInfoResult = tType('EventTargetWaitForEventInfoResult');
 scheme.PageWaitForEventInfoResult = tType('EventTargetWaitForEventInfoResult');
 scheme.WebSocketWaitForEventInfoResult = tType('EventTargetWaitForEventInfoResult');
 scheme.ElectronApplicationWaitForEventInfoResult = tType('EventTargetWaitForEventInfoResult');
+scheme.ElectronContextWaitForEventInfoResult = tType('EventTargetWaitForEventInfoResult');
 scheme.AndroidDeviceWaitForEventInfoResult = tType('EventTargetWaitForEventInfoResult');
 scheme.BrowserContextInitializer = tObject({
   isChromium: tBoolean,
@@ -2243,6 +2245,12 @@ scheme.ElectronLaunchParams = tObject({
 scheme.ElectronLaunchResult = tObject({
   electronApplication: tChannel(['ElectronApplication']),
 });
+scheme.ElectronAttachParams = tObject({
+  id: tNumber,
+});
+scheme.ElectronAttachResult = tObject({
+  electronContext: tChannel(['ElectronContext']),
+});
 scheme.ElectronApplicationInitializer = tObject({
   context: tChannel(['BrowserContext']),
 });
@@ -2271,6 +2279,198 @@ scheme.ElectronApplicationEvaluateExpressionHandleResult = tObject({
 });
 scheme.ElectronApplicationCloseParams = tOptional(tObject({}));
 scheme.ElectronApplicationCloseResult = tOptional(tObject({}));
+scheme.ElectronContextInitializer = tObject({
+  context: tChannel(['BrowserContext']),
+  tracing: tChannel(['Tracing']),
+});
+scheme.ElectronContextBindingCallEvent = tObject({
+  binding: tChannel(['BindingCall']),
+});
+scheme.ElectronContextConsoleEvent = tObject({
+  message: tChannel(['ConsoleMessage']),
+});
+scheme.ElectronContextCloseEvent = tOptional(tObject({}));
+scheme.ElectronContextDialogEvent = tObject({
+  dialog: tChannel(['Dialog']),
+});
+scheme.ElectronContextPageEvent = tObject({
+  page: tChannel(['Page']),
+});
+scheme.ElectronContextRouteEvent = tObject({
+  route: tChannel(['Route']),
+});
+scheme.ElectronContextVideoEvent = tObject({
+  artifact: tChannel(['Artifact']),
+});
+scheme.ElectronContextBackgroundPageEvent = tObject({
+  page: tChannel(['Page']),
+});
+scheme.ElectronContextServiceWorkerEvent = tObject({
+  worker: tChannel(['Worker']),
+});
+scheme.ElectronContextRequestEvent = tObject({
+  request: tChannel(['Request']),
+  page: tOptional(tChannel(['Page'])),
+});
+scheme.ElectronContextRequestFailedEvent = tObject({
+  request: tChannel(['Request']),
+  failureText: tOptional(tString),
+  responseEndTiming: tNumber,
+  page: tOptional(tChannel(['Page'])),
+});
+scheme.ElectronContextRequestFinishedEvent = tObject({
+  request: tChannel(['Request']),
+  response: tOptional(tChannel(['Response'])),
+  responseEndTiming: tNumber,
+  page: tOptional(tChannel(['Page'])),
+});
+scheme.ElectronContextResponseEvent = tObject({
+  response: tChannel(['Response']),
+  page: tOptional(tChannel(['Page'])),
+});
+scheme.ElectronContextAddCookiesParams = tObject({
+  cookies: tArray(tType('SetNetworkCookie')),
+});
+scheme.ElectronContextAddCookiesResult = tOptional(tObject({}));
+scheme.ElectronContextAddInitScriptParams = tObject({
+  source: tString,
+});
+scheme.ElectronContextAddInitScriptResult = tOptional(tObject({}));
+scheme.ElectronContextClearCookiesParams = tOptional(tObject({}));
+scheme.ElectronContextClearCookiesResult = tOptional(tObject({}));
+scheme.ElectronContextClearPermissionsParams = tOptional(tObject({}));
+scheme.ElectronContextClearPermissionsResult = tOptional(tObject({}));
+scheme.ElectronContextCloseParams = tOptional(tObject({}));
+scheme.ElectronContextCloseResult = tOptional(tObject({}));
+scheme.ElectronContextCookiesParams = tObject({
+  urls: tArray(tString),
+});
+scheme.ElectronContextCookiesResult = tObject({
+  cookies: tArray(tType('NetworkCookie')),
+});
+scheme.ElectronContextExposeBindingParams = tObject({
+  name: tString,
+  needsHandle: tOptional(tBoolean),
+});
+scheme.ElectronContextExposeBindingResult = tOptional(tObject({}));
+scheme.ElectronContextGrantPermissionsParams = tObject({
+  permissions: tArray(tString),
+  origin: tOptional(tString),
+});
+scheme.ElectronContextGrantPermissionsResult = tOptional(tObject({}));
+scheme.ElectronContextPageParams = tOptional(tObject({}));
+scheme.ElectronContextPageResult = tObject({
+  page: tChannel(['Page']),
+});
+scheme.ElectronContextNewPageParams = tOptional(tObject({}));
+scheme.ElectronContextNewPageResult = tObject({
+  page: tChannel(['Page']),
+});
+scheme.ElectronContextSetDefaultNavigationTimeoutNoReplyParams = tObject({
+  timeout: tOptional(tNumber),
+});
+scheme.ElectronContextSetDefaultNavigationTimeoutNoReplyResult = tOptional(tObject({}));
+scheme.ElectronContextSetDefaultTimeoutNoReplyParams = tObject({
+  timeout: tOptional(tNumber),
+});
+scheme.ElectronContextSetDefaultTimeoutNoReplyResult = tOptional(tObject({}));
+scheme.ElectronContextSetExtraHTTPHeadersParams = tObject({
+  headers: tArray(tType('NameValue')),
+});
+scheme.ElectronContextSetExtraHTTPHeadersResult = tOptional(tObject({}));
+scheme.ElectronContextSetGeolocationParams = tObject({
+  geolocation: tOptional(tObject({
+    longitude: tNumber,
+    latitude: tNumber,
+    accuracy: tOptional(tNumber),
+  })),
+});
+scheme.ElectronContextSetGeolocationResult = tOptional(tObject({}));
+scheme.ElectronContextSetHTTPCredentialsParams = tObject({
+  httpCredentials: tOptional(tObject({
+    username: tString,
+    password: tString,
+    origin: tOptional(tString),
+  })),
+});
+scheme.ElectronContextSetHTTPCredentialsResult = tOptional(tObject({}));
+scheme.ElectronContextSetNetworkInterceptionPatternsParams = tObject({
+  patterns: tArray(tObject({
+    glob: tOptional(tString),
+    regexSource: tOptional(tString),
+    regexFlags: tOptional(tString),
+  })),
+});
+scheme.ElectronContextSetNetworkInterceptionPatternsResult = tOptional(tObject({}));
+scheme.ElectronContextSetOfflineParams = tObject({
+  offline: tBoolean,
+});
+scheme.ElectronContextSetOfflineResult = tOptional(tObject({}));
+scheme.ElectronContextStorageStateParams = tOptional(tObject({}));
+scheme.ElectronContextStorageStateResult = tObject({
+  cookies: tArray(tType('NetworkCookie')),
+  origins: tArray(tType('OriginStorage')),
+});
+scheme.ElectronContextPauseParams = tOptional(tObject({}));
+scheme.ElectronContextPauseResult = tOptional(tObject({}));
+scheme.ElectronContextRecorderSupplementEnableParams = tObject({
+  language: tOptional(tString),
+  mode: tOptional(tEnum(['inspecting', 'recording'])),
+  pauseOnNextStatement: tOptional(tBoolean),
+  testIdAttributeName: tOptional(tString),
+  launchOptions: tOptional(tAny),
+  contextOptions: tOptional(tAny),
+  device: tOptional(tString),
+  saveStorage: tOptional(tString),
+  outputFile: tOptional(tString),
+  handleSIGINT: tOptional(tBoolean),
+  omitCallTracking: tOptional(tBoolean),
+});
+scheme.ElectronContextRecorderSupplementEnableResult = tOptional(tObject({}));
+scheme.ElectronContextNewCDPSessionParams = tObject({
+  page: tOptional(tChannel(['Page'])),
+  frame: tOptional(tChannel(['Frame'])),
+});
+scheme.ElectronContextNewCDPSessionResult = tObject({
+  session: tChannel(['CDPSession']),
+});
+scheme.ElectronContextHarStartParams = tObject({
+  page: tOptional(tChannel(['Page'])),
+  options: tType('RecordHarOptions'),
+});
+scheme.ElectronContextHarStartResult = tObject({
+  harId: tString,
+});
+scheme.ElectronContextHarExportParams = tObject({
+  harId: tOptional(tString),
+});
+scheme.ElectronContextHarExportResult = tObject({
+  artifact: tChannel(['Artifact']),
+});
+scheme.ElectronContextCreateTempFileParams = tObject({
+  name: tString,
+});
+scheme.ElectronContextCreateTempFileResult = tObject({
+  writableStream: tChannel(['WritableStream']),
+});
+scheme.ElectronContextUpdateSubscriptionParams = tObject({
+  event: tEnum(['console', 'dialog', 'request', 'response', 'requestFinished', 'requestFailed']),
+  enabled: tBoolean,
+});
+scheme.ElectronContextUpdateSubscriptionResult = tOptional(tObject({}));
+scheme.ElectronContextStartTracingParams = tObject({
+  page: tOptional(tChannel(['Page'])),
+  path: tOptional(tString),
+  screenshots: tOptional(tBoolean),
+  categories: tOptional(tArray(tString)),
+});
+scheme.ElectronContextStartTracingResult = tOptional(tObject({}));
+scheme.ElectronContextStopTracingParams = tObject({
+  path: tOptional(tString),
+});
+scheme.ElectronContextStopTracingResult = tObject({
+  binary: tBinary,
+});
 scheme.AndroidInitializer = tOptional(tObject({}));
 scheme.AndroidDevicesParams = tObject({
   host: tOptional(tString),

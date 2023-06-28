@@ -25,7 +25,8 @@ import { ChannelOwner } from './channelOwner';
 import { envObjectToArray } from './clientHelper';
 import { Events } from './events';
 import { JSHandle, parseResult, serializeArgument } from './jsHandle';
-import type { Page } from './page';
+import { Tracing } from './tracing';
+import { Page } from './page';
 import type { Env, WaitForEventOptions, Headers, BrowserContextOptions } from './types';
 import { Waiter } from './waiter';
 
@@ -55,6 +56,10 @@ export class Electron extends ChannelOwner<channels.ElectronChannel> implements 
     const app = ElectronApplication.from((await this._channel.launch(params)).electronApplication);
     app._context._options = params;
     return app;
+  }
+
+  async attach(params: channels.ElectronAttachParams): Promise<ElectronContext> {
+    return ElectronContext.from((await this._channel.attach({ id: params.id })).electronContext);
   }
 }
 
@@ -138,5 +143,22 @@ export class ElectronApplication extends ChannelOwner<channels.ElectronApplicati
   async evaluateHandle<R, Arg>(pageFunction: structs.PageFunctionOn<ElectronAppType, Arg, R>, arg: Arg): Promise<structs.SmartHandle<R>> {
     const result = await this._channel.evaluateExpressionHandle({ expression: String(pageFunction), isFunction: typeof pageFunction === 'function', arg: serializeArgument(arg) });
     return JSHandle.from(result.handle) as any as structs.SmartHandle<R>;
+  }
+}
+
+export class ElectronContext extends ChannelOwner<channels.ElectronContextChannel> implements api.ElectronContext {
+  readonly tracing: Tracing;
+
+  static from(electronContext: channels.ElectronContextChannel): ElectronContext {
+    return (electronContext as any)._object;
+  }
+
+  constructor(parent: ChannelOwner, type: string, guid: string, initializer: channels.ElectronContextInitializer) {
+    super(parent, type, guid, initializer);
+    this.tracing = Tracing.from(initializer.tracing);
+  }
+
+  async page() {
+    return Page.from((await this._channel.page()).page);
   }
 }

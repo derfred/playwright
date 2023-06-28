@@ -24,7 +24,7 @@ export { ConsoleMessage } from './consoleMessage';
 export { Coverage } from './coverage';
 export { Dialog } from './dialog';
 export { Download } from './download';
-export { Electron, ElectronApplication } from './electron';
+export { Electron, ElectronApplication, ElectronContext } from './electron';
 export { Locator, FrameLocator } from './locator';
 export { ElementHandle } from './elementHandle';
 export { FileChooser } from './fileChooser';

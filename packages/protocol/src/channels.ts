@@ -29,6 +29,7 @@ export type InitializerTraits<T> =
     T extends AndroidDeviceChannel ? AndroidDeviceInitializer :
     T extends AndroidSocketChannel ? AndroidSocketInitializer :
     T extends AndroidChannel ? AndroidInitializer :
+    T extends ElectronContextChannel ? ElectronContextInitializer :
     T extends ElectronApplicationChannel ? ElectronApplicationInitializer :
     T extends ElectronChannel ? ElectronInitializer :
     T extends CDPSessionChannel ? CDPSessionInitializer :
@@ -67,6 +68,7 @@ export type EventsTraits<T> =
     T extends AndroidDeviceChannel ? AndroidDeviceEvents :
     T extends AndroidSocketChannel ? AndroidSocketEvents :
     T extends AndroidChannel ? AndroidEvents :
+    T extends ElectronContextChannel ? ElectronContextEvents :
     T extends ElectronApplicationChannel ? ElectronApplicationEvents :
     T extends ElectronChannel ? ElectronEvents :
     T extends CDPSessionChannel ? CDPSessionEvents :
@@ -105,6 +107,7 @@ export type EventTargetTraits<T> =
     T extends AndroidDeviceChannel ? AndroidDeviceEventTarget :
     T extends AndroidSocketChannel ? AndroidSocketEventTarget :
     T extends AndroidChannel ? AndroidEventTarget :
+    T extends ElectronContextChannel ? ElectronContextEventTarget :
     T extends ElectronApplicationChannel ? ElectronApplicationEventTarget :
     T extends ElectronChannel ? ElectronEventTarget :
     T extends CDPSessionChannel ? CDPSessionEventTarget :
@@ -3980,6 +3983,7 @@ export interface ElectronEventTarget {
 export interface ElectronChannel extends ElectronEventTarget, Channel {
   _type_Electron: boolean;
   launch(params: ElectronLaunchParams, metadata?: CallMetadata): Promise<ElectronLaunchResult>;
+  attach(params: ElectronAttachParams, metadata?: CallMetadata): Promise<ElectronAttachResult>;
 }
 export type ElectronLaunchParams = {
   executablePath?: string,
@@ -4052,6 +4056,15 @@ export type ElectronLaunchOptions = {
 export type ElectronLaunchResult = {
   electronApplication: ElectronApplicationChannel,
 };
+export type ElectronAttachParams = {
+  id: number,
+};
+export type ElectronAttachOptions = {
+
+};
+export type ElectronAttachResult = {
+  electronContext: ElectronContextChannel,
+};
 
 export interface ElectronEvents {
 }
@@ -4108,6 +4121,350 @@ export type ElectronApplicationCloseResult = void;
 
 export interface ElectronApplicationEvents {
   'close': ElectronApplicationCloseEvent;
+}
+
+// ----------- ElectronContext -----------
+export type ElectronContextInitializer = {
+  context: BrowserContextChannel,
+  tracing: TracingChannel,
+};
+export interface ElectronContextEventTarget {
+  on(event: 'bindingCall', callback: (params: ElectronContextBindingCallEvent) => void): this;
+  on(event: 'console', callback: (params: ElectronContextConsoleEvent) => void): this;
+  on(event: 'close', callback: (params: ElectronContextCloseEvent) => void): this;
+  on(event: 'dialog', callback: (params: ElectronContextDialogEvent) => void): this;
+  on(event: 'page', callback: (params: ElectronContextPageEvent) => void): this;
+  on(event: 'route', callback: (params: ElectronContextRouteEvent) => void): this;
+  on(event: 'video', callback: (params: ElectronContextVideoEvent) => void): this;
+  on(event: 'backgroundPage', callback: (params: ElectronContextBackgroundPageEvent) => void): this;
+  on(event: 'serviceWorker', callback: (params: ElectronContextServiceWorkerEvent) => void): this;
+  on(event: 'request', callback: (params: ElectronContextRequestEvent) => void): this;
+  on(event: 'requestFailed', callback: (params: ElectronContextRequestFailedEvent) => void): this;
+  on(event: 'requestFinished', callback: (params: ElectronContextRequestFinishedEvent) => void): this;
+  on(event: 'response', callback: (params: ElectronContextResponseEvent) => void): this;
+}
+export interface ElectronContextChannel extends ElectronContextEventTarget, EventTargetChannel {
+  _type_ElectronContext: boolean;
+  addCookies(params: ElectronContextAddCookiesParams, metadata?: CallMetadata): Promise<ElectronContextAddCookiesResult>;
+  addInitScript(params: ElectronContextAddInitScriptParams, metadata?: CallMetadata): Promise<ElectronContextAddInitScriptResult>;
+  clearCookies(params?: ElectronContextClearCookiesParams, metadata?: CallMetadata): Promise<ElectronContextClearCookiesResult>;
+  clearPermissions(params?: ElectronContextClearPermissionsParams, metadata?: CallMetadata): Promise<ElectronContextClearPermissionsResult>;
+  close(params?: ElectronContextCloseParams, metadata?: CallMetadata): Promise<ElectronContextCloseResult>;
+  cookies(params: ElectronContextCookiesParams, metadata?: CallMetadata): Promise<ElectronContextCookiesResult>;
+  exposeBinding(params: ElectronContextExposeBindingParams, metadata?: CallMetadata): Promise<ElectronContextExposeBindingResult>;
+  grantPermissions(params: ElectronContextGrantPermissionsParams, metadata?: CallMetadata): Promise<ElectronContextGrantPermissionsResult>;
+  page(params?: ElectronContextPageParams, metadata?: CallMetadata): Promise<ElectronContextPageResult>;
+  newPage(params?: ElectronContextNewPageParams, metadata?: CallMetadata): Promise<ElectronContextNewPageResult>;
+  setDefaultNavigationTimeoutNoReply(params: ElectronContextSetDefaultNavigationTimeoutNoReplyParams, metadata?: CallMetadata): Promise<ElectronContextSetDefaultNavigationTimeoutNoReplyResult>;
+  setDefaultTimeoutNoReply(params: ElectronContextSetDefaultTimeoutNoReplyParams, metadata?: CallMetadata): Promise<ElectronContextSetDefaultTimeoutNoReplyResult>;
+  setExtraHTTPHeaders(params: ElectronContextSetExtraHTTPHeadersParams, metadata?: CallMetadata): Promise<ElectronContextSetExtraHTTPHeadersResult>;
+  setGeolocation(params: ElectronContextSetGeolocationParams, metadata?: CallMetadata): Promise<ElectronContextSetGeolocationResult>;
+  setHTTPCredentials(params: ElectronContextSetHTTPCredentialsParams, metadata?: CallMetadata): Promise<ElectronContextSetHTTPCredentialsResult>;
+  setNetworkInterceptionPatterns(params: ElectronContextSetNetworkInterceptionPatternsParams, metadata?: CallMetadata): Promise<ElectronContextSetNetworkInterceptionPatternsResult>;
+  setOffline(params: ElectronContextSetOfflineParams, metadata?: CallMetadata): Promise<ElectronContextSetOfflineResult>;
+  storageState(params?: ElectronContextStorageStateParams, metadata?: CallMetadata): Promise<ElectronContextStorageStateResult>;
+  pause(params?: ElectronContextPauseParams, metadata?: CallMetadata): Promise<ElectronContextPauseResult>;
+  recorderSupplementEnable(params: ElectronContextRecorderSupplementEnableParams, metadata?: CallMetadata): Promise<ElectronContextRecorderSupplementEnableResult>;
+  newCDPSession(params: ElectronContextNewCDPSessionParams, metadata?: CallMetadata): Promise<ElectronContextNewCDPSessionResult>;
+  harStart(params: ElectronContextHarStartParams, metadata?: CallMetadata): Promise<ElectronContextHarStartResult>;
+  harExport(params: ElectronContextHarExportParams, metadata?: CallMetadata): Promise<ElectronContextHarExportResult>;
+  createTempFile(params: ElectronContextCreateTempFileParams, metadata?: CallMetadata): Promise<ElectronContextCreateTempFileResult>;
+  updateSubscription(params: ElectronContextUpdateSubscriptionParams, metadata?: CallMetadata): Promise<ElectronContextUpdateSubscriptionResult>;
+  startTracing(params: ElectronContextStartTracingParams, metadata?: CallMetadata): Promise<ElectronContextStartTracingResult>;
+  stopTracing(params: ElectronContextStopTracingParams, metadata?: CallMetadata): Promise<ElectronContextStopTracingResult>;
+}
+export type ElectronContextBindingCallEvent = {
+  binding: BindingCallChannel,
+};
+export type ElectronContextConsoleEvent = {
+  message: ConsoleMessageChannel,
+};
+export type ElectronContextCloseEvent = {};
+export type ElectronContextDialogEvent = {
+  dialog: DialogChannel,
+};
+export type ElectronContextPageEvent = {
+  page: PageChannel,
+};
+export type ElectronContextRouteEvent = {
+  route: RouteChannel,
+};
+export type ElectronContextVideoEvent = {
+  artifact: ArtifactChannel,
+};
+export type ElectronContextBackgroundPageEvent = {
+  page: PageChannel,
+};
+export type ElectronContextServiceWorkerEvent = {
+  worker: WorkerChannel,
+};
+export type ElectronContextRequestEvent = {
+  request: RequestChannel,
+  page?: PageChannel,
+};
+export type ElectronContextRequestFailedEvent = {
+  request: RequestChannel,
+  failureText?: string,
+  responseEndTiming: number,
+  page?: PageChannel,
+};
+export type ElectronContextRequestFinishedEvent = {
+  request: RequestChannel,
+  response?: ResponseChannel,
+  responseEndTiming: number,
+  page?: PageChannel,
+};
+export type ElectronContextResponseEvent = {
+  response: ResponseChannel,
+  page?: PageChannel,
+};
+export type ElectronContextAddCookiesParams = {
+  cookies: SetNetworkCookie[],
+};
+export type ElectronContextAddCookiesOptions = {
+
+};
+export type ElectronContextAddCookiesResult = void;
+export type ElectronContextAddInitScriptParams = {
+  source: string,
+};
+export type ElectronContextAddInitScriptOptions = {
+
+};
+export type ElectronContextAddInitScriptResult = void;
+export type ElectronContextClearCookiesParams = {};
+export type ElectronContextClearCookiesOptions = {};
+export type ElectronContextClearCookiesResult = void;
+export type ElectronContextClearPermissionsParams = {};
+export type ElectronContextClearPermissionsOptions = {};
+export type ElectronContextClearPermissionsResult = void;
+export type ElectronContextCloseParams = {};
+export type ElectronContextCloseOptions = {};
+export type ElectronContextCloseResult = void;
+export type ElectronContextCookiesParams = {
+  urls: string[],
+};
+export type ElectronContextCookiesOptions = {
+
+};
+export type ElectronContextCookiesResult = {
+  cookies: NetworkCookie[],
+};
+export type ElectronContextExposeBindingParams = {
+  name: string,
+  needsHandle?: boolean,
+};
+export type ElectronContextExposeBindingOptions = {
+  needsHandle?: boolean,
+};
+export type ElectronContextExposeBindingResult = void;
+export type ElectronContextGrantPermissionsParams = {
+  permissions: string[],
+  origin?: string,
+};
+export type ElectronContextGrantPermissionsOptions = {
+  origin?: string,
+};
+export type ElectronContextGrantPermissionsResult = void;
+export type ElectronContextPageParams = {};
+export type ElectronContextPageOptions = {};
+export type ElectronContextPageResult = {
+  page: PageChannel,
+};
+export type ElectronContextNewPageParams = {};
+export type ElectronContextNewPageOptions = {};
+export type ElectronContextNewPageResult = {
+  page: PageChannel,
+};
+export type ElectronContextSetDefaultNavigationTimeoutNoReplyParams = {
+  timeout?: number,
+};
+export type ElectronContextSetDefaultNavigationTimeoutNoReplyOptions = {
+  timeout?: number,
+};
+export type ElectronContextSetDefaultNavigationTimeoutNoReplyResult = void;
+export type ElectronContextSetDefaultTimeoutNoReplyParams = {
+  timeout?: number,
+};
+export type ElectronContextSetDefaultTimeoutNoReplyOptions = {
+  timeout?: number,
+};
+export type ElectronContextSetDefaultTimeoutNoReplyResult = void;
+export type ElectronContextSetExtraHTTPHeadersParams = {
+  headers: NameValue[],
+};
+export type ElectronContextSetExtraHTTPHeadersOptions = {
+
+};
+export type ElectronContextSetExtraHTTPHeadersResult = void;
+export type ElectronContextSetGeolocationParams = {
+  geolocation?: {
+    longitude: number,
+    latitude: number,
+    accuracy?: number,
+  },
+};
+export type ElectronContextSetGeolocationOptions = {
+  geolocation?: {
+    longitude: number,
+    latitude: number,
+    accuracy?: number,
+  },
+};
+export type ElectronContextSetGeolocationResult = void;
+export type ElectronContextSetHTTPCredentialsParams = {
+  httpCredentials?: {
+    username: string,
+    password: string,
+    origin?: string,
+  },
+};
+export type ElectronContextSetHTTPCredentialsOptions = {
+  httpCredentials?: {
+    username: string,
+    password: string,
+    origin?: string,
+  },
+};
+export type ElectronContextSetHTTPCredentialsResult = void;
+export type ElectronContextSetNetworkInterceptionPatternsParams = {
+  patterns: {
+    glob?: string,
+    regexSource?: string,
+    regexFlags?: string,
+  }[],
+};
+export type ElectronContextSetNetworkInterceptionPatternsOptions = {
+
+};
+export type ElectronContextSetNetworkInterceptionPatternsResult = void;
+export type ElectronContextSetOfflineParams = {
+  offline: boolean,
+};
+export type ElectronContextSetOfflineOptions = {
+
+};
+export type ElectronContextSetOfflineResult = void;
+export type ElectronContextStorageStateParams = {};
+export type ElectronContextStorageStateOptions = {};
+export type ElectronContextStorageStateResult = {
+  cookies: NetworkCookie[],
+  origins: OriginStorage[],
+};
+export type ElectronContextPauseParams = {};
+export type ElectronContextPauseOptions = {};
+export type ElectronContextPauseResult = void;
+export type ElectronContextRecorderSupplementEnableParams = {
+  language?: string,
+  mode?: 'inspecting' | 'recording',
+  pauseOnNextStatement?: boolean,
+  testIdAttributeName?: string,
+  launchOptions?: any,
+  contextOptions?: any,
+  device?: string,
+  saveStorage?: string,
+  outputFile?: string,
+  handleSIGINT?: boolean,
+  omitCallTracking?: boolean,
+};
+export type ElectronContextRecorderSupplementEnableOptions = {
+  language?: string,
+  mode?: 'inspecting' | 'recording',
+  pauseOnNextStatement?: boolean,
+  testIdAttributeName?: string,
+  launchOptions?: any,
+  contextOptions?: any,
+  device?: string,
+  saveStorage?: string,
+  outputFile?: string,
+  handleSIGINT?: boolean,
+  omitCallTracking?: boolean,
+};
+export type ElectronContextRecorderSupplementEnableResult = void;
+export type ElectronContextNewCDPSessionParams = {
+  page?: PageChannel,
+  frame?: FrameChannel,
+};
+export type ElectronContextNewCDPSessionOptions = {
+  page?: PageChannel,
+  frame?: FrameChannel,
+};
+export type ElectronContextNewCDPSessionResult = {
+  session: CDPSessionChannel,
+};
+export type ElectronContextHarStartParams = {
+  page?: PageChannel,
+  options: RecordHarOptions,
+};
+export type ElectronContextHarStartOptions = {
+  page?: PageChannel,
+};
+export type ElectronContextHarStartResult = {
+  harId: string,
+};
+export type ElectronContextHarExportParams = {
+  harId?: string,
+};
+export type ElectronContextHarExportOptions = {
+  harId?: string,
+};
+export type ElectronContextHarExportResult = {
+  artifact: ArtifactChannel,
+};
+export type ElectronContextCreateTempFileParams = {
+  name: string,
+};
+export type ElectronContextCreateTempFileOptions = {
+
+};
+export type ElectronContextCreateTempFileResult = {
+  writableStream: WritableStreamChannel,
+};
+export type ElectronContextUpdateSubscriptionParams = {
+  event: 'console' | 'dialog' | 'request' | 'response' | 'requestFinished' | 'requestFailed',
+  enabled: boolean,
+};
+export type ElectronContextUpdateSubscriptionOptions = {
+
+};
+export type ElectronContextUpdateSubscriptionResult = void;
+export type ElectronContextStartTracingParams = {
+  page?: PageChannel,
+  path?: string,
+  screenshots?: boolean,
+  categories?: string[],
+};
+export type ElectronContextStartTracingOptions = {
+  page?: PageChannel,
+  path?: string,
+  screenshots?: boolean,
+  categories?: string[],
+};
+export type ElectronContextStartTracingResult = void;
+export type ElectronContextStopTracingParams = {
+  path?: string,
+};
+export type ElectronContextStopTracingOptions = {
+  path?: string,
+};
+export type ElectronContextStopTracingResult = {
+  binary: Binary,
+};
+
+export interface ElectronContextEvents {
+  'bindingCall': ElectronContextBindingCallEvent;
+  'console': ElectronContextConsoleEvent;
+  'close': ElectronContextCloseEvent;
+  'dialog': ElectronContextDialogEvent;
+  'page': ElectronContextPageEvent;
+  'route': ElectronContextRouteEvent;
+  'video': ElectronContextVideoEvent;
+  'backgroundPage': ElectronContextBackgroundPageEvent;
+  'serviceWorker': ElectronContextServiceWorkerEvent;
+  'request': ElectronContextRequestEvent;
+  'requestFailed': ElectronContextRequestFailedEvent;
+  'requestFinished': ElectronContextRequestFinishedEvent;
+  'response': ElectronContextResponseEvent;
 }
 
 // ----------- Android -----------

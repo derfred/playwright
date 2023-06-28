@@ -16,7 +16,7 @@
 
 import { baseTest } from '../config/baseTest';
 import * as path from 'path';
-import type { ElectronApplication, Page, Electron } from '@playwright/test';
+import type { ElectronApplication, ElectronContext, Page, Electron } from '@playwright/test';
 import type { PageTestFixtures, PageWorkerFixtures } from '../page/pageTestApi';
 import type { TraceViewerFixtures } from '../config/traceViewerFixtures';
 import { traceViewerFixtures } from '../config/traceViewerFixtures';

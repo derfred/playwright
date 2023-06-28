@@ -29,7 +29,7 @@ import { Dialog } from './dialog';
 import { parseError } from '../protocol/serializers';
 import { CDPSession } from './cdpSession';
 import { Playwright } from './playwright';
-import { Electron, ElectronApplication } from './electron';
+import { Electron, ElectronApplication, ElectronContext } from './electron';
 import type * as channels from '@protocol/channels';
 import { Stream } from './stream';
 import { WritableStream } from './writableStream';
@@ -251,6 +251,9 @@ export class Connection extends EventEmitter {
         break;
       case 'ElectronApplication':
         result = new ElectronApplication(parent, type, guid, initializer);
+        break;
+      case 'ElectronContext':
+        result = new ElectronContext(parent, type, guid, initializer);
         break;
       case 'ElementHandle':
         result = new ElementHandle(parent, type, guid, initializer);

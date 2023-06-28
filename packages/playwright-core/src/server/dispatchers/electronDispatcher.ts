@@ -17,10 +17,11 @@
 import type { RootDispatcher } from './dispatcher';
 import { Dispatcher } from './dispatcher';
 import type { Electron } from '../electron/electron';
-import { ElectronApplication } from '../electron/electron';
+import { ElectronApplication, ElectronContext } from '../electron/electron';
 import type * as channels from '@protocol/channels';
 import { BrowserContextDispatcher } from './browserContextDispatcher';
-import type { PageDispatcher } from './pageDispatcher';
+import { TracingDispatcher } from './tracingDispatcher';
+import { PageDispatcher } from './pageDispatcher';
 import { parseArgument, serializeResult } from './jsHandleDispatcher';
 import { ElementHandleDispatcher } from './elementHandlerDispatcher';
 
@@ -34,6 +35,11 @@ export class ElectronDispatcher extends Dispatcher<Electron, channels.ElectronCh
   async launch(params: channels.ElectronLaunchParams): Promise<channels.ElectronLaunchResult> {
     const electronApplication = await this._object.launch(params);
     return { electronApplication: new ElectronApplicationDispatcher(this, electronApplication) };
+  }
+
+  async attach(params: channels.ElectronAttachParams): Promise<channels.ElectronAttachResult> {
+    const electronContext = await this._object.attach(params);
+    return { electronContext: new ElectronContextDispatcher(this, electronContext) };
   }
 }
 
@@ -69,5 +75,27 @@ export class ElectronApplicationDispatcher extends Dispatcher<ElectronApplicatio
 
   async close(): Promise<void> {
     await this._object.close();
+  }
+}
+
+export class ElectronContextDispatcher extends Dispatcher<ElectronContext, channels.ElectronContextChannel, ElectronDispatcher> implements channels.ElectronContextChannel {
+  constructor(scope: ElectronDispatcher, electronContext: ElectronContext) {
+    const tracing = TracingDispatcher.from(scope as BrowserContextDispatcher, electronContext.tracing);
+
+    super(scope, electronContext, 'ElectronContext', {
+      context: new BrowserContextDispatcher(scope, electronContext.context),
+      tracing
+    });
+
+    this.adopt(tracing);
+  }
+
+  async addCookies(params: channels.BrowserContextAddCookiesParams): Promise<void> {
+    await this._object.addCookies(params.cookies);
+  }
+
+  async page(): Promise<channels.ElectronContextPageResult> {
+    const page = await this._object.page();
+    return { page: PageDispatcher.from(this, page) };
   }
 }

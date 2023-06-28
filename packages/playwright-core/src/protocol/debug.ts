@@ -72,6 +72,7 @@ export const commandsWithTracingSnapshots = new Set([
   'Page.waitForEventInfo',
   'WebSocket.waitForEventInfo',
   'ElectronApplication.waitForEventInfo',
+  'ElectronContext.waitForEventInfo',
   'AndroidDevice.waitForEventInfo',
   'Page.emulateMedia',
   'Page.goBack',

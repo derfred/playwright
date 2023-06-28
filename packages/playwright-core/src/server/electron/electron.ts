@@ -17,8 +17,7 @@
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import type { CRBrowserContext } from '../chromium/crBrowser';
-import { CRBrowser } from '../chromium/crBrowser';
+import { CRBrowser, CRBrowserContext } from '../chromium/crBrowser';
 import type { CRSession } from '../chromium/crConnection';
 import { CRConnection } from '../chromium/crConnection';
 import type { CRPage } from '../chromium/crPage';
@@ -30,7 +29,9 @@ import { wrapInASCIIBox } from '../../utils';
 import { WebSocketTransport } from '../transport';
 import { launchProcess, envArrayToObject } from '../../utils/processLauncher';
 import { BrowserContext, validateBrowserContextOptions } from '../browserContext';
-import type { BrowserWindow } from 'electron';
+import type { BrowserWindow, Debugger } from 'electron';
+import type { TracerOptions } from '../trace/recorder/tracing';
+import { Tracing } from '../trace/recorder/tracing';
 import type { Progress } from '../progress';
 import { ProgressController } from '../progress';
 import { helper } from '../helper';
@@ -113,6 +114,109 @@ export class ElectronApplication extends SdkObject {
       const wc = webContents.fromDevToolsTargetId(targetId);
       return BrowserWindow.fromWebContents(wc);
     }, targetId);
+  }
+}
+
+class ElectronBrowserWindowConnectionSession {
+  private _listeners = new Map<string, (params: any) => void>();
+  private _debugger: Debugger;
+
+  constructor(_debugger: Debugger) {
+    this._debugger = _debugger;
+
+    if (!this._debugger.isAttached()) {
+      this._debugger.attach('1.3');
+    }
+
+    this._debugger.on('message', (event, method, params) => {
+      const listener = this._listeners.get(method);
+      if (!listener) return;
+      listener(params);
+    })
+  }
+
+  _sendMayFail(method: string, params: any): Promise<any> {
+    return this._debugger.sendCommand(method, params).catch(e => {});
+  }
+
+  send(method: string, params: any): Promise<any> {
+    return this._debugger.sendCommand(method, params);
+  }
+
+  on(method: string, listener: (params: any) => void) {
+    this._listeners.set(method, listener);
+  }
+
+  async once(method: string): Promise<any> {
+    
+  }
+}
+
+class ElectronBrowserWindowConnection {
+  private _session: ElectronBrowserWindowConnectionSession;
+
+  constructor(_debugger: Debugger) {
+    this._session = new ElectronBrowserWindowConnectionSession(_debugger);
+  }
+
+  get rootSession(): ElectronBrowserWindowConnectionSession {
+    return this._session;
+  }
+
+  session(): ElectronBrowserWindowConnectionSession {
+    return this._session;
+  }
+
+  on(event: string, listener: () => void) {
+
+  }
+}
+
+export class ElectronContext extends SdkObject {
+  private _browser: CRBrowser;
+  private _context: CRBrowserContext;
+  readonly tracing: Tracing;
+
+  constructor(parent: SdkObject, private _browserWindow: BrowserWindow, private _connection: ElectronBrowserWindowConnection, artifactsDir: string) {
+    super(parent, 'electron-context');
+
+    const browserOptions = {
+      name: 'electron',
+      isChromium: true,
+      headful: true,
+      persistent: { noDefaultViewport: true },
+      protocolLogger: helper.debugProtocolLogger(),
+      browserLogsCollector: new RecentLogsCollector(),
+      artifactsDir,
+      downloadsPath: artifactsDir,
+      tracesDir: artifactsDir,
+      originalLaunchOptions: {}
+    };
+
+    this._browser = new CRBrowser(this.attribution.playwright, (_connection as unknown) as CRConnection, browserOptions);
+    this._context = new CRBrowserContext(this._browser, undefined, browserOptions.persistent);
+    this._context._initialize();
+    this._browser._defaultContext = this._context;
+    this.tracing = new Tracing(this._context, browserOptions.tracesDir);
+  }
+
+  async initialize() {
+    const targetInfo = await this._connection.rootSession.send('Target.getTargetInfo', {});
+    this._browser._onAttachedToTarget({ ...targetInfo, sessionId: "<dummy>", waitingForDebugger: false})
+    await this._browser._waitForAllPagesToBeInitialized();
+  }
+
+  get context(): BrowserContext {
+    return this._context!;
+  }
+
+  async addCookies(cookies: channels.SetNetworkCookie[]): Promise<void> {
+    this.context.addCookies(cookies);
+  }
+
+  async page() {
+    const pages = this.context.pages();
+    return pages[pages.length - 1];
   }
 }
 
@@ -240,6 +344,18 @@ export class Electron extends SdkObject {
       await app.initialize();
       return app;
     }, TimeoutSettings.timeout(options));
+  }
+
+  async attach(params: channels.ElectronAttachParams): Promise<ElectronContext> {
+    const { BrowserWindow } = require('electron');
+    const browserWindow = BrowserWindow.fromId(params.id);
+    if (!browserWindow)
+      throw new Error(`BrowserWindow with id=${params.id} not found`);
+    const connection = new ElectronBrowserWindowConnection(browserWindow.webContents.debugger);
+    const artifactsDir = await fs.promises.mkdtemp(ARTIFACTS_FOLDER);
+    const context = new ElectronContext(this, browserWindow, connection, artifactsDir);
+    await context.initialize();
+    return context;
   }
 }
 
