@@ -112,7 +112,7 @@ DOM changes in between the calls due to re-render, the new element corresponding
 locator will be used.
 
 ```js
-const locator = page.getByRole('button', { name: 'Sign in' })
+const locator = page.getByRole('button', { name: 'Sign in' });
 
 await locator.hover();
 await locator.click();
@@ -316,8 +316,8 @@ You can fill the input after locating it by the placeholder text:
 
 ```js
 await page
-    .getByPlaceholder("name@example.com")
-    .fill("playwright@microsoft.com");
+    .getByPlaceholder('name@example.com')
+    .fill('playwright@microsoft.com');
 ```
 
 ```java
@@ -412,15 +412,13 @@ assertThat(page
 ```
 
 ```python async
-await expect(page
-    .get_by_text(re.compile("welcome, john", re.IGNORECASE)))
-    .to_be_visible()
+await expect(
+    page.get_by_text(re.compile("welcome, john", re.IGNORECASE))
+).to_be_visible()
 ```
 
 ```python sync
-expect(page
-    .get_by_text(re.compile("welcome, john", re.IGNORECASE)))
-    .to_be_visible()
+expect(page.get_by_text(re.compile("welcome, john", re.IGNORECASE))).to_be_visible()
 ```
 
 ```csharp
@@ -934,9 +932,9 @@ Locators support an option to only select elements that have or have not a desce
 ```js
 await page
     .getByRole('listitem')
-    .filter({ has: page.getByRole('heading', { name: 'Product 2' })})
+    .filter({ has: page.getByRole('heading', { name: 'Product 2' }) })
     .getByRole('button', { name: 'Add to cart' })
-    .click()
+    .click();
 ```
 
 ```java
@@ -1193,7 +1191,7 @@ newEmail.click();
 new_email = page.get_by_role("button", name="New")
 dialog = page.get_by_text("Confirm security settings")
 await expect(new_email.or_(dialog)).to_be_visible()
-if (await dialog.is_visible())
+if (await dialog.is_visible()):
   await page.get_by_role("button", name="Dismiss").click()
 await new_email.click()
 ```
@@ -1202,7 +1200,7 @@ await new_email.click()
 new_email = page.get_by_role("button", name="New")
 dialog = page.get_by_text("Confirm security settings")
 expect(new_email.or_(dialog)).to_be_visible()
-if (dialog.is_visible())
+if (dialog.is_visible()):
   page.get_by_role("button", name="Dismiss").click()
 new_email.click()
 ```
@@ -1533,27 +1531,25 @@ To take a screenshot of the row with "Mary" and "Say goodbye":
 const rowLocator = page.getByRole('listitem');
 
 await rowLocator
-  .filter({ hasText: 'Mary' })
-  .filter({ has: page.getByRole('button', { name: 'Say goodbye' }) })
-  .screenshot({ path: 'screenshot.png' });
+    .filter({ hasText: 'Mary' })
+    .filter({ has: page.getByRole('button', { name: 'Say goodbye' }) })
+    .screenshot({ path: 'screenshot.png' });
 ```
 
 ```python async
 row_locator = page.get_by_role("listitem")
 
-await row_locator
-    .filter(has_text="Mary")
-    .filter(has=page.get_by_role("button", name="Say goodbye"))
-    .screenshot(path="screenshot.png")
+await row_locator.filter(has_text="Mary").filter(
+    has=page.get_by_role("button", name="Say goodbye")
+).screenshot(path="screenshot.png")
 ```
 
 ```python sync
 row_locator = page.get_by_role("listitem")
 
-row_locator
-    .filter(has_text="Mary")
-    .filter(has=page.get_by_role("button", name="Say goodbye"))
-    .screenshot(path="screenshot.png")
+row_locator.filter(has_text="Mary").filter(
+    has=page.get_by_role("button", name="Say goodbye")
+).screenshot(path="screenshot.png")
 ```
 
 ```java
