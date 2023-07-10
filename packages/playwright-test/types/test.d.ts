@@ -1151,7 +1151,7 @@ interface TestConfig {
    *
    * Consider the following file structure:
    *
-   * ```
+   * ```txt
    * playwright.config.ts
    * tests/
    * └── page/
@@ -3530,7 +3530,7 @@ export interface PlaywrightWorkerOptions {
    * ```
    *
    */
-  launchOptions: LaunchOptions;
+  launchOptions: Omit<LaunchOptions, 'tracesDir'>;
   /**
    * **Usage**
    *
@@ -6324,7 +6324,7 @@ interface TestProject {
    *
    * Consider the following file structure:
    *
-   * ```
+   * ```txt
    * playwright.config.ts
    * tests/
    * └── page/
